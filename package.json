@@ -1,0 +1,53 @@
+{
+  "name": "creative-screenshots",
+  "version": "1.0.0",
+  "description": "Capture screenshots of Campaign Manager Tags",
+  "config": {
+    "cloud_bucket": "cs_output",
+    "cloud_run_region": "us-west2",
+    "service_name": "creative-screenshot-service",
+    "file_path_pattern": "{accountId}/{advertiserId}/{campaignId}/{placementId}_{index}.jpg",
+    "screenshot_padding": 16,
+    "screenshot_quality": 100,
+    "ms_before_screenshot": 1000,
+    "ms_before_screenshot_instream": 8000,
+    "number_of_screenshots": 15,
+    "service_acccount": ""
+  },
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "npm run serve",
+    "serve": "node dist/index.js",
+    "build-ts": "tsc",
+    "watch-ts": "tsc -w",
+    "cloud-run-build": "gcloud builds submit --tag gcr.io/$(gcloud config get-value project)/$npm_package_config_service_name",
+    "cloud-run-deploy-only": "gcloud alpha run deploy $npm_package_config_service_name --image gcr.io/$(gcloud config get-value project)/$npm_package_config_service_name --memory 2G --update-env-vars CLOUD_PROJECT_ID=$(gcloud config get-value project),CLOUD_RUN_REGION=$npm_package_config_cloud_run_region,CLOUD_BUCKET=$npm_package_config_cloud_bucket,FILE_PATH_PATTERN=$npm_package_config_file_path_pattern,SCREENSHOT_PADDING=$npm_package_config_screenshot_padding,SCREENSHOT_QUALITY=$npm_package_config_screenshot_quality,MS_BEFORE_SCREENSHOT=$npm_package_config_ms_before_screenshot,MS_BEFORE_SCREENSHOT_INSTREAM=$npm_package_config_ms_before_screenshot_instream,NUMBER_OF_SCREENSHOTS=$npm_package_config_number_of_screenshots --platform managed --service-account=$npm_package_config_service_account",
+    "cloud-run-deploy": "npm run cloud-run-build && npm run cloud-run-deploy-only"
+  },
+  "author": "Google Inc.",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@google-cloud/datastore": "^6.1.0",
+    "@google-cloud/storage": "^5.1.2",
+    "@google-cloud/tasks": "^2.1.0",
+    "@types/body-parser": "^1.19.0",
+    "@types/cheerio": "^0.22.21",
+    "@types/express": "^4.17.7",
+    "@types/node": "^14.0.23",
+    "@types/puppeteer": "^3.0.1",
+    "@types/request": "^2.48.5",
+    "body-parser": "^1.19.0",
+    "cheerio": "^1.0.0-rc.3",
+    "express": "^4.17.0",
+    "gaxios": "^3.0.4",
+    "google-auth-library": "^6.0.5",
+    "googleapis": "^54.0.0",
+    "puppeteer": "^5.1.0",
+    "request": "^2.88.2"
+  },
+  "devDependencies": {
+    "tslint": "^6.1.2",
+    "typescript": "^3.9.6"
+  }
+}
